@@ -2,7 +2,10 @@ const functions = require("firebase-functions");
 const express = require('express');
 const mongoose = require('mongoose');
 
-const mongooseConfig = { useNewUrlParser: true };
+const mongooseConfig = { 
+    useNewUrlParser: true,
+    useUnifiedTopology: true, 
+};
 mongoose.connect('CONNECTION_STRING', mongooseConfig);
 
 const app = express();
@@ -11,21 +14,17 @@ const Pets = require('./pets');
 
 const createServer = () => {
     app.get('/pets', async (req, res) => {
-        //const pet = new Pets({
-        //    nombre: 'Cerdito feliz',
-        //    tipo: 'Cerdo',
-        //    descripcion: 'Esta triste porque su amigo no para de comer',
-        //});
-
-        //pet.save();
-        
         const result = await Pets.find({}).exec();
 
         res.send(result);
     });
     
-    app.post('/pets', (req, res) => {
-        res.send('creando una mascota');
+    app.post('/pets', async (req, res) => {
+        const { body } =  req;
+
+        const pet = new Pets(body);
+        await pet.save();
+        res.sendStatus(204);
     });
 
     app.get('/pets/:id/daralta', (req, res) => {
