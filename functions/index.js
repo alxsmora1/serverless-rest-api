@@ -29,9 +29,9 @@ const createServer = () => {
   app.post("/pets", async (req, res) => {
     const {body} = req;
 
-    const pet = new Pets(body);
+    const pet = new Pets(JSON.parse(body));
     await pet.save();
-    res.sendStatus(204);
+    res.send(pet._id);
   });
 
   app.get("/pets/:id/daralta", async (req, res) => {
